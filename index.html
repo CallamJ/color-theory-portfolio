@@ -1,344 +1,457 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Art Portfolio</title>
-  <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    [v-cloak] { display: none; }
-    .fade-enter-active, .fade-leave-active {
-      transition: opacity 0.3s;
-    }
-    .fade-enter-from, .fade-leave-to {
-      opacity: 0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Portfolio</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity 0.3s;
+        }
+
+        .fade-enter-from, .fade-leave-to {
+            opacity: 0;
+        }
+    </style>
 </head>
 <body>
-  <div id="app" v-cloak>
+<div id="app" v-cloak>
     <div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
-      
-      <!-- Navigation -->
-      <nav class="fixed top-0 w-full bg-black/30 backdrop-blur-md z-40 border-b border-white/10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex justify-between items-center h-16">
-            <div class="text-xl font-bold tracking-wider">{{ portfolioData.name }}</div>
-            
-            <!-- Desktop Navigation -->
-            <div class="hidden md:flex space-x-8">
-              <a href="#work" class="hover:text-purple-400 transition">Work</a>
-              <a href="#about" class="hover:text-purple-400 transition">About</a>
-              <a href="#contact" class="hover:text-purple-400 transition">Contact</a>
+
+        <!-- Navigation -->
+        <nav class="fixed top-0 w-full bg-black/30 backdrop-blur-md z-40 border-b border-white/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="text-xl font-bold tracking-wider">{{ portfolioData.name }}</div>
+
+                    <!-- Desktop Navigation -->
+                    <div class="hidden md:flex space-x-8">
+                        <a href="#work" class="hover:text-purple-400 transition">Work</a>
+                        <a href="#about" class="hover:text-purple-400 transition">About</a>
+                        <a href="#contact" class="hover:text-purple-400 transition">Contact</a>
+                    </div>
+
+                    <!-- Mobile Menu Button -->
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
 
-            <!-- Mobile Menu Button -->
-            <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
+            <!-- Mobile Menu -->
+            <div v-if="mobileMenuOpen" class="md:hidden bg-black/95 backdrop-blur-md border-t border-white/10">
+                <div class="px-4 py-4 space-y-3">
+                    <a href="#work" @click="mobileMenuOpen = false" class="block hover:text-purple-400">Work</a>
+                    <a href="#about" @click="mobileMenuOpen = false" class="block hover:text-purple-400">About</a>
+                    <a href="#contact" @click="mobileMenuOpen = false" class="block hover:text-purple-400">Contact</a>
+                </div>
+            </div>
+        </nav>
 
-        <!-- Mobile Menu -->
-        <div v-if="mobileMenuOpen" class="md:hidden bg-black/95 backdrop-blur-md border-t border-white/10">
-          <div class="px-4 py-4 space-y-3">
-            <a href="#work" @click="mobileMenuOpen = false" class="block hover:text-purple-400">Work</a>
-            <a href="#about" @click="mobileMenuOpen = false" class="block hover:text-purple-400">About</a>
-            <a href="#contact" @click="mobileMenuOpen = false" class="block hover:text-purple-400">Contact</a>
-          </div>
-        </div>
-      </nav>
+        <!-- Hero Section -->
+        <section class="pt-32 pb-20 px-4">
+            <div class="max-w-7xl mx-auto">
+                <h1 class="text-6xl md:text-8xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+                    {{ portfolioData.name }}
+                </h1>
+                <p class="text-2xl md:text-3xl text-purple-300">{{ portfolioData.tagline }}</p>
+            </div>
+        </section>
 
-      <!-- Hero Section -->
-      <section class="pt-32 pb-20 px-4">
-        <div class="max-w-7xl mx-auto">
-          <h1 class="text-6xl md:text-8xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
-            {{ portfolioData.name }}
-          </h1>
-          <p class="text-2xl md:text-3xl text-purple-300">{{ portfolioData.tagline }}</p>
-        </div>
-      </section>
-
-      <!-- Filter Tabs -->
-      <section id="work" class="px-4 pb-8">
-        <div class="max-w-7xl mx-auto">
-          <div class="flex flex-wrap gap-3">
-            <button
-              v-for="cat in categories"
-              :key="cat.id"
-              @click="filter = cat.id"
-              :class="[
+        <!-- Filter Tabs -->
+        <section id="work" class="px-4 pb-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-wrap gap-3">
+                    <button
+                            v-for="cat in categories"
+                            :key="cat.id"
+                            @click="filter = cat.id"
+                            :class="[
                 'px-6 py-2 rounded-full transition',
                 filter === cat.id 
                   ? 'bg-purple-600 text-white' 
                   : 'bg-white/10 hover:bg-white/20 text-white/70'
               ]"
-            >
-              {{ cat.label }}
-            </button>
-          </div>
-        </div>
-      </section>
+                    >
+                        {{ cat.label }}
+                    </button>
+                </div>
+            </div>
+        </section>
 
-      <!-- Projects Grid -->
-      <section class="px-4 pb-20">
-        <div class="max-w-7xl mx-auto">
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Projects Grid -->
+        <section class="px-4 pb-20">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div
+                            v-for="project in filteredProjects"
+                            :key="project.id"
+                            @click="selectedProject = project"
+                            class="group cursor-pointer relative overflow-hidden rounded-xl bg-white/5 hover:bg-white/10 transition-all duration-300 hover:scale-105"
+                    >
+                        <div class="aspect-[4/3] overflow-hidden relative">
+                            <img
+                                    :src="project.image"
+                                    :alt="project.title"
+                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            />
+                            <!-- Favorite Badge -->
+                            <div v-if="project.favorite"
+                                 class="absolute top-3 right-3 bg-pink-600 text-white p-2 rounded-full">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold">{{ project.title }}</h3>
+                            </div>
+                            <p class="text-sm text-white/60">{{ project.year }} • {{ project.medium }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="px-4 py-20 bg-black/30">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-4xl md:text-5xl font-bold mb-8">About</h2>
+                <p class="text-xl text-white/80 leading-relaxed">
+                    {{ portfolioData.about }}
+                </p>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="px-4 py-20">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-4xl md:text-5xl font-bold mb-8">Get In Touch</h2>
+                <p class="text-xl text-white/80 mb-8">
+                    Interested in working together? Let's connect!
+                </p>
+                <div class="flex justify-center gap-6 flex-wrap">
+                    <a
+                            :href="'mailto:' + portfolioData.email"
+                            class="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-full transition"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                        Email Me
+                    </a>
+                    <a
+                            :href="portfolioData.social.instagram"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full transition"
+                    >
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path>
+                        </svg>
+                        Instagram
+                    </a>
+                    <a
+                            :href="portfolioData.social.twitter"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full transition"
+                    >
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"></path>
+                        </svg>
+                        Twitter
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="px-4 py-8 border-t border-white/10 text-center text-white/60">
+            <p>© 2025 {{ portfolioData.name }}. All rights reserved.</p>
+        </footer>
+
+        <!-- Project Modal -->
+        <transition name="fade">
             <div
-              v-for="project in filteredProjects"
-              :key="project.id"
-              @click="selectedProject = project"
-              class="group cursor-pointer relative overflow-hidden rounded-xl bg-white/5 hover:bg-white/10 transition-all duration-300 hover:scale-105"
+                    v-if="selectedProject"
+                    @click="selectedProject = null"
+                    class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             >
-              <div class="aspect-[4/3] overflow-hidden relative">
-                <img 
-                  :src="project.image" 
-                  :alt="project.title"
-                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <!-- Favorite Badge -->
-                <div v-if="project.favorite" class="absolute top-3 right-3 bg-pink-600 text-white p-2 rounded-full">
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                  </svg>
+                <div
+                        @click.stop
+                        class="bg-slate-900 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+                >
+                    <div class="sticky top-0 bg-slate-900 border-b border-white/10 p-4 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <h3 class="text-2xl font-bold">{{ selectedProject.title }}</h3>
+                            <svg v-if="selectedProject.favorite" class="w-6 h-6 text-pink-500" fill="currentColor"
+                                 viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                            </svg>
+                        </div>
+                        <button
+                                @click="selectedProject = null"
+                                class="hover:bg-white/10 p-2 rounded-full transition"
+                        >
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <img
+                                :src="selectedProject.image"
+                                :alt="selectedProject.title"
+                                class="w-full rounded-xl mb-6"
+                        />
+                        <div class="space-y-4">
+                            <div class="flex gap-4 text-sm text-white/60">
+                                <span>{{ selectedProject.year }}</span>
+                                <span>•</span>
+                                <span>{{ selectedProject.medium }}</span>
+                                <span>•</span>
+                                <span class="capitalize">{{ selectedProject.category }}</span>
+                            </div>
+                            <div class="prose prose-invert max-w-none">
+                                <p class="text-lg text-white/90 leading-relaxed">
+                                    {{ selectedProject.writeup }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div class="p-6">
-                <div class="flex justify-between items-start mb-2">
-                  <h3 class="text-xl font-bold">{{ project.title }}</h3>
-                </div>
-                <p class="text-sm text-white/60">{{ project.year }} • {{ project.medium }}</p>
-              </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- About Section -->
-      <section id="about" class="px-4 py-20 bg-black/30">
-        <div class="max-w-4xl mx-auto">
-          <h2 class="text-4xl md:text-5xl font-bold mb-8">About</h2>
-          <p class="text-xl text-white/80 leading-relaxed">
-            {{ portfolioData.about }}
-          </p>
-        </div>
-      </section>
-
-      <!-- Contact Section -->
-      <section id="contact" class="px-4 py-20">
-        <div class="max-w-4xl mx-auto text-center">
-          <h2 class="text-4xl md:text-5xl font-bold mb-8">Get In Touch</h2>
-          <p class="text-xl text-white/80 mb-8">
-            Interested in working together? Let's connect!
-          </p>
-          <div class="flex justify-center gap-6 flex-wrap">
-            <a 
-              :href="'mailto:' + portfolioData.email"
-              class="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-full transition"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-              </svg>
-              Email Me
-            </a>
-            <a 
-              :href="portfolioData.social.instagram"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full transition"
-            >
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path>
-              </svg>
-              Instagram
-            </a>
-            <a 
-              :href="portfolioData.social.twitter"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full transition"
-            >
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"></path>
-              </svg>
-              Twitter
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- Footer -->
-      <footer class="px-4 py-8 border-t border-white/10 text-center text-white/60">
-        <p>© 2025 {{ portfolioData.name }}. All rights reserved.</p>
-      </footer>
-
-      <!-- Project Modal -->
-      <transition name="fade">
-        <div 
-          v-if="selectedProject"
-          @click="selectedProject = null"
-          class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-        >
-          <div 
-            @click.stop
-            class="bg-slate-900 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
-          >
-            <div class="sticky top-0 bg-slate-900 border-b border-white/10 p-4 flex justify-between items-center">
-              <div class="flex items-center gap-3">
-                <h3 class="text-2xl font-bold">{{ selectedProject.title }}</h3>
-                <svg v-if="selectedProject.favorite" class="w-6 h-6 text-pink-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                </svg>
-              </div>
-              <button 
-                @click="selectedProject = null"
-                class="hover:bg-white/10 p-2 rounded-full transition"
-              >
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-              </button>
-            </div>
-            <div class="p-6">
-              <img 
-                :src="selectedProject.image" 
-                :alt="selectedProject.title"
-                class="w-full rounded-xl mb-6"
-              />
-              <div class="space-y-4">
-                <div class="flex gap-4 text-sm text-white/60">
-                  <span>{{ selectedProject.year }}</span>
-                  <span>•</span>
-                  <span>{{ selectedProject.medium }}</span>
-                  <span>•</span>
-                  <span class="capitalize">{{ selectedProject.category }}</span>
-                </div>
-                <div class="prose prose-invert max-w-none">
-                  <p class="text-lg text-white/90 leading-relaxed">
-                    {{ selectedProject.writeup }}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </transition>
+        </transition>
 
     </div>
-  </div>
+</div>
 
-  <script>
-    const { createApp } = Vue;
+<script>
+    const {createApp} = Vue;
 
     createApp({
-      data() {
-        return {
-          selectedProject: null,
-          mobileMenuOpen: false,
-          filter: 'all',
-          
-          // CUSTOMIZE YOUR PORTFOLIO DATA HERE
-          portfolioData: {
-            name: "Callam Jomaa",
-            tagline: "Tech Enthusiast & Professional. Amatuer Digital Artist",
-            about: "I'm a passionate artist exploring the intersection of traditional and digital mediums. My work focuses on capturing emotion through color and form, while challenging conventional perspectives on contemporary art.",
-            email: "contact@callamjomaa.com",
-            social: {
-              instagram: "https://instagram.com/yourusername",
-              twitter: "https://twitter.com/yourusername"
-            },
-            
-            projects: [
-              {
-                id: 1,
-                title: "Abstract Art",
-                category: "traditional",
-                medium: "Alcohol Markers",
-                year: "2025",
-                writeup: "I started out thinking about bubbles. I made three circles, then added smaller circles within those. Then I thought I would add triangles in the larger ones, then they turned into pyramids. I just kept adding detail until I reached something that looks like a geometric design almost alike something that would be on a rug. I like the way the pyramids look, just floating as if in space. I think the parts i dislike the most are the gray lines in the yellow circles which I think should have been smaller and not gone the whole way into the circle. I also would fix the green square I botched in the top.",
-                image: "img/abstract-replace.png",
-                favorite: false
-              },
-              {
-                id: 2,
-                title: "Project In Grays",
-                category: "traditional",
-                medium: "Graphite",
-                year: "2025",
-                writeup: "I started thinking about nature, and I went through my photos and found one that looked nice (in my opinion), and started sketching. I did not trace the photo, I just had it up on my phone and glanced over at it while I sketched. Because I wasn't tracing, I didn't follow the perspective quite perfectly, but I think it still looks okay. The best part (in my opinion) is there treeline on the right, I think the stylized look is nice. The buddy board does look a little soulless without the hooks, I might go back on my own time and add them, as well as some other details.",
-                image: "img/project-in-grays.png",
-                favorite: true
-              },
-              {
-                id: 3,
-                title: "Color Variation",
-                category: "traditional",
-                medium: "Collage",
-                year: "2025",
-                writeup: "For this, (which may be obvious) I did blue, and I made a collage. All the snippets are from the same magazine, that magazine being an edition of Better Homes & Gardens. The resulting piece honestly exceeded my expectations, and I think the waterfall really holds it all together.",
-                image: "img/color-variation.png",
-                favorite: false
-              },
-              {
-                id: 4,
-                title: "Monochromatic Value",
-                category: "digital",
-                medium: "Digital Illustration",
-                year: "2025",
-                writeup: "I wasn't sure what I wanted to do, but once I decided I wanted to do purple, I started thinking about meteors, and things like that.\n" +
-                    "\n" +
-                    "That led me to my initial start (what is in my WIP photo). I then started to add some shading, and I thought to add a horizon line. Below that line turned into an ocean, and above that line turned into a sky.\n" +
-                    "\n" +
-                    "I really like the stars and the sky, I think the little dots really made it look way better.\n" +
-                    "\n" +
-                    "I think more shading on the trail could be added, it looks a bit *too* simple right now.",
-                image: "img/monochromatic.png",
-                favorite: false
-              },
-              {
-                id: 5,
-                title: "Minimalist Posters",
-                category: "design",
-                medium: "Vector Graphics",
-                year: "2025",
-                writeup: "This series of poster designs embraces the power of restraint. Working with limited color palettes and bold geometric shapes, each piece communicates complex ideas through visual simplicity. Created for various cultural events and exhibitions, these posters demonstrate how reduction can amplify impact. The challenge was to distill each concept to its essence while maintaining visual interest and emotional resonance.",
-                image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&h=600&fit=crop",
-                favorite: true
-              },
-              {
-                id: 6,
-                title: "Mixed Media",
-                category: "traditional",
-                medium: "Acrylic, Collage & Digital",
-                year: "2025",
-                writeup: "These experimental works combine physical painting, found materials, and digital manipulation to create layered narratives. I start with acrylic on canvas, incorporate collaged elements from vintage magazines and personal photographs, then finish with subtle digital enhancements. This hybrid approach reflects our contemporary experience of reality—fragmented, mediated through screens, yet grounded in physical existence. Each piece tells a story about memory, nostalgia, and the collision of analog and digital worlds.",
-                image: "https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=800&h=600&fit=crop",
-                favorite: false
-              }
-            ]
-          },
+        data() {
+            return {
+                selectedProject: null,
+                mobileMenuOpen: false,
+                filter: 'all',
 
-          categories: [
-            { id: 'all', label: 'All Work' },
-            { id: 'digital', label: 'Digital' },
-            { id: 'traditional', label: 'Traditional' },
-            { id: 'photography', label: 'Photography' },
-            { id: 'design', label: 'Design' }
-          ]
+                // CUSTOMIZE YOUR PORTFOLIO DATA HERE
+                portfolioData: {
+                    name: "Callam Jomaa",
+                    tagline: "Tech Enthusiast & Professional. Amatuer Digital Artist",
+                    about: "I'm a passionate artist exploring the intersection of traditional and digital mediums. My work focuses on capturing emotion through color and form, while challenging conventional perspectives on contemporary art.",
+                    email: "contact@callamjomaa.com",
+                    social: {
+                        instagram: "https://instagram.com/yourusername",
+                        twitter: "https://twitter.com/yourusername"
+                    },
+
+                    projects: [
+                        {
+                            id: 1,
+                            title: "Abstract Art",
+                            category: "traditional",
+                            medium: "Alcohol Markers",
+                            year: "2025",
+                            writeup: "I started out thinking about bubbles. I made three circles, then added smaller circles within those. Then I thought I would add triangles in the larger ones, then they turned into pyramids. I just kept adding detail until I reached something that looks like a geometric design almost alike something that would be on a rug. I like the way the pyramids look, just floating as if in space. I think the parts i dislike the most are the gray lines in the yellow circles which I think should have been smaller and not gone the whole way into the circle. I also would fix the green square I botched in the top.",
+                            image: "img/abstract-replace.png",
+                            favorite: false
+                        },
+                        {
+                            id: 2,
+                            title: "Project In Grays",
+                            category: "traditional",
+                            medium: "Graphite",
+                            year: "2025",
+                            writeup: "I started thinking about nature, and I went through my photos and found one that looked nice (in my opinion), and started sketching. I did not trace the photo, I just had it up on my phone and glanced over at it while I sketched. Because I wasn't tracing, I didn't follow the perspective quite perfectly, but I think it still looks okay. The best part (in my opinion) is there treeline on the right, I think the stylized look is nice. The buddy board does look a little soulless without the hooks, I might go back on my own time and add them, as well as some other details.",
+                            image: "img/project-in-grays.png",
+                            favorite: true
+                        },
+                        {
+                            id: 3,
+                            title: "Color Variation",
+                            category: "traditional",
+                            medium: "Collage",
+                            year: "2025",
+                            writeup: "For this, (which may be obvious) I did blue, and I made a collage. All the snippets are from the same magazine, that magazine being an edition of Better Homes & Gardens. The resulting piece honestly exceeded my expectations, and I think the waterfall really holds it all together.",
+                            image: "img/color-variation.png",
+                            favorite: false
+                        },
+                        {
+                            id: 4,
+                            title: "Monochromatic Value",
+                            category: "digital",
+                            medium: "Digital Painting (Krita)",
+                            year: "2025",
+                            writeup: "I wasn't sure what I wanted to do, but once I decided I wanted to do purple, I started thinking about meteors, and things like that.\n" +
+                                "\n" +
+                                "That led me to my initial start (what is in my WIP photo). I then started to add some shading, and I thought to add a horizon line. Below that line turned into an ocean, and above that line turned into a sky.\n" +
+                                "\n" +
+                                "I really like the stars and the sky, I think the little dots really made it look way better.\n" +
+                                "\n" +
+                                "I think more shading on the trail could be added, it looks a bit *too* simple right now.",
+                            image: "img/monochromatic.png",
+                            favorite: false
+                        },
+                        {
+                            id: 5,
+                            title: "Warm/Cool Harmony",
+                            category: "digital",
+                            medium: "Digital Painting (Krita)",
+                            year: "2025",
+                            writeup: "For this time, I wanted to try a more fauvist approach to painting, that is to paint the colors that the objects \"felt like\" rather than what they visually look like. I started by looking for a reference image that would do. I used it mostly as inspiration while I painted, but I did not strictly follow its form. I think it turned out so well! My proudest part is the sort of snowy, grassy, goldy (is that a word?) field, and the tree. I think the cloudy mountains in the far background could have used SLIGHTLY more detail, but I was running out of time.",
+                            image: "img/warm-cool-harmony.png",
+                            favorite: true
+                        },
+                        {
+                            id: 6,
+                            title: "Complimentary Color Scheme Portrait",
+                            category: "digital",
+                            medium: "Digital Painting (Krita)",
+                            year: "2025",
+                            writeup: "For this one I wanted to make a portrait of one of my co-workers. I started by tracing a rough outline of their face, and I chose my color palette. I went for a yellow and violet color palette because I think it fit them very well. I think my favorite touch is the stylized \"eyelids\" on the glasses, it really makes it so much more complete. If I were to do this again, I would probably make the hair more interesting, everything else has just the right shape, but I'm not quite happy with the hair.",
+                            image: "img/complimentary-portrait.png",
+                            favorite: false
+                        },
+                        {
+                            id: 7,
+                            title: "Mondrian Style",
+                            category: "traditional",
+                            medium: "Water-based Markers",
+                            year: "2025",
+                            writeup: "When I saw the examples I immediately thought about one of those golden ratio grids. At first I was thinking I would measure the each line, but that didn't seem like it fit the style, so I went with a similar inspiration, but a different approach, where each layer was split into larger and larger percentages as it went on. I think I should have make some smaller splits to start with, just so I could have some smaller places to put some more color in, right now it just feels a little empty on the right and top, but I didn't want to fill that whole area with color.",
+                            image: "img/mondrian.jpeg",
+                            favorite: false
+                        },
+                        {
+                            id: 8,
+                            title: "Analogous Color Animation",
+                            category: "digital",
+                            medium: "Procedural Animation (Manim)",
+                            year: "2025",
+                            writeup: "I was inspired by the animated example, and decided to make manim animation of a sort of range of analogous colors. I wanted to make it interesting and so I added some entrance and exit effects. Overall I think it looks interesting, but what really bothers me is that it's not a perfect loop. I'm not sure how I would achieve this with purely manim, but I think it would really make the gif cool.",
+                            image: "img/analogous-colors-manim.gif",
+                            favorite: false
+                        },
+                        {
+                            id: 9,
+                            title: "Mixed Color Wheel",
+                            category: "traditional",
+                            medium: "Acrylic Paint",
+                            year: "2025",
+                            writeup: "My process for my color wheel was pretty simple, I started by drawing a rough outline for my circle, adding spots for the colors, and mixing the colors around the circle as I went. It was a pretty simple process and I think it worked out well.",
+                            image: "img/color-wheel.jpeg",
+                            favorite: false
+                        },
+                        {
+                            id: 10,
+                            title: "Self Portrait",
+                            category: "traditional",
+                            medium: "Color Pencil",
+                            year: "2025",
+                            writeup: "I wanted to use this self-portrait to symbolize some of my withdrawnness. I chose two analogous colors, blue and green. The blue is intended to help symbolize the \"cold\" in the jacket I wear, that hides the more vibrant part of me. I chose green for the inner part for two reasons: it has a sort of prismatic, but human feeling (maybe that's just me), and it green is (sort of) my favorite color, although I think yellow, red, or orange might have been more obvious colors to go with. In general, there are two parts of the portrait. There is me on the inside in green, holding myself in. And there is my jacket on the outside in blue, which protects me from the cold around me, and keeps my dearest things inside. I wear my 'jacket' as a facade sometimes, and I am still learning how to be more open sometimes.\n" +
+                                "\n" +
+                                "I think the jacket and the face is overall pretty good, I think I could have used a slightly wider range of greens. I kind of wanted to create a more crystal-like look on the face, which I think I needed at least 1 more significantly different variant. I think I actually like the outline the best, perhaps graphite is more my style.",
+                            image: "img/self-portrait.jpeg",
+                            favorite: false
+                        },
+                        {
+                            id: 11,
+                            title: "Translucency Chart",
+                            category: "traditional",
+                            medium: "Acrylic Paint",
+                            year: "2025",
+                            writeup: "The letters at the start of the colors are the brand names abbreviated, the \"legend\" is on the right. \"Acrylic Colour\" (some sort of generic I imagine) and Marie's were both tube-paint, meanwhile all the Apple Barrel paints were in small bottles, all of them were Acrylic. From the result, I can tell Burnt Umber, Candy Pink, and Petunia Purple are all quite opaque, meanwhile the rest of the colors seem to be rather transparent. Lemon Yellow and Vermilion seem to be a little more opaque than the others however.",
+                            image: "img/translucency-chart.jpeg",
+                            favorite: false
+                        },
+                        {
+                            id: 12,
+                            title: "Bezold Effect",
+                            category: "traditional",
+                            medium: "Collage",
+                            year: "2025",
+                            writeup: " may have gone a little overboard on this project, the designs are much more intricate than I think they needed to be, and thus it took a very long time. My initial thought was a sort of crest, with crossed swords, and I wanted to use 4 colors, 2 would be the subject's colors, and the other 2 would be the background, then they would swap. I also thought a diamond was a good idea as well. The end results are pretty good I think, however the intricacy did affect just how identical the shapes are. If I did it again, I would do a lot simpler shapes, and probably get a glue stick.",
+                            image: "img/bezold-effect.jpeg",
+                            favorite: false
+                        },
+                        {
+                            id: 13,
+                            title: "Underpainting",
+                            category: "traditional",
+                            medium: "Acrylic Paint",
+                            year: "2025",
+                            writeup: "\n" +
+                                "At first I was thinking about something that would be simple since I am a pretty novice painter with somewhat limited resources, so I figured, \"what's more simple than a door?\". I thought it might be an interesting \"this is fine\" (see: https://giphy.com/explore/this-is-fine) sort of painting if I added some fire on the inside.\n" +
+                                "\n" +
+                                "I chose acrylic because that is what I have the most of. I went with a soft yellow siding because I thought it was the most \"calm\" color for a house, as well as a pink door for a similar reason. The \"welcome home\" message on the mat is to directly spell out the normal, juxtaposed with the clear signs otherwise: burning fire, cracked glass, and leaking smoke.\n" +
+                                "I chose orange to underpaint, since it seemed to make sense, with a yellow house, pink door, and the brown welcome mat, with the fire on the inside. I think I should have chose a different more cool color for the siding though. I ended up feeling like I was fighting it there, since the color I was painting over it was not cooler than the underpainting.\n" +
+                                "\n" +
+                                "The biggest flaws that stick out to me:\n" +
+                                "The 2-dimensionality of the door, since the the view is from a little above, there should have been some more of the windowsill visible through the window.\n" +
+                                "The scale, the mat is a bit cut off, and its not quite centered, if the view was a little farther it would have looked better I think.\n" +
+                                "The door, the left edge isn't really straight it's pretty glaring.\n" +
+                                "\n" +
+                                "The parts I like:\n" +
+                                "I think the juxtaposition works pretty well. I think the perspective is slightly better, and the shading near the bottom on the concrete is better than I expected (I swear it looks a little better in person!). It's a little hard to tell, but the mat is supposed to be angled on a ramp, which is why there are edges around it. Also I think the door handle is relatively okay.",
+                            image: "img/underpainting.jpeg",
+                            favorite: false
+                        },
+                        {
+                            id: 14,
+                            title: "Midterm Project",
+                            category: "digital",
+                            medium: "Digital Painting (Krita)",
+                            year: "2025",
+                            writeup: "Firstly the trees, which were quite tediously placing several layers of color, texture, and shading along the areas I outlined. After that I went in-between all the well-defined trees and places rough tree-like shapes and forms, as well as shading behind the trees to give the illusion of a forest. Next I put the mountain in the background, with a snowcap, and added some atmospheric shading to sell the look. Then I added the sky using a few bands of color, blurred that layer to make a simple stepped but not harsh gradient, and added texture to it using a light brush. Finally I added a layer of clouds around the snowcap using a large brush. Overall I think it worked out. The bright sky compliments the dark reflection pretty well, and the mix of analogous colors in both the dark and the light side turned out good in my (definitely not at all biased) opinion. Having the pause in the middle to take some notes was helpful.",
+                            image: "img/midterm.png",
+                            favorite: true
+                        },
+                        {
+                            id: 15,
+                            title: "Interior Design",
+                            category: "digital",
+                            medium: "Digital Coloring (Krita)",
+                            year: "2025",
+                            writeup: "I've always wanted to have a some programmable lighting, in an ideal world (which is what we are modeling I suppose) I would replace the christmas lights with some programmable string lights. I would add some programmable light strips around as well, perhaps some under the bed, as well as some around the desk. I would also replace the light bulbs with some programmable ones and add some diffusers over them.\n" +
+                                "\n" +
+                                "Right now the whole room is mainly fresh wood. While I don't hate the aesthetic, I think a white color scheme with pastel pink highlights and dark gray/purple accents would be wonderful. To that end, I would want to replace/refinish most of my furniture to fit that palette. The bed frame would be space cadet, as well as the dresser and the rafters. The bedding and curtains would be pink and soft pink, and the tables and walls would be white. The carpet could be replaced with something white or soft pink. I think the desk would work best with white or space cadet, I don't want it to be *too* pink, along with the shelves above it. There is definitely a line which, when crossed, is a distasteful amount of pink (similar to any color). The backpacking chair next to the window is a temporary thing, but if it were permanent I would make it pink + light pink. I actually already have a mouse pad that is white + pink which I could swap the current one with. Finally the office chair would have to be replaced, probably with something white.",
+                            image: "img/interior-design.jpeg",
+                            favorite: true
+                        }
+                    ]
+                },
+
+                categories: [
+                    {id: 'all', label: 'All Work'},
+                    {id: 'digital', label: 'Digital'},
+                    {id: 'traditional', label: 'Traditional'},
+                ]
+            }
+        },
+
+        computed: {
+            filteredProjects() {
+                return this.filter === 'all'
+                    ? this.portfolioData.projects
+                    : this.portfolioData.projects.filter(p => p.category === this.filter);
+            }
         }
-      },
-      
-      computed: {
-        filteredProjects() {
-          return this.filter === 'all' 
-            ? this.portfolioData.projects 
-            : this.portfolioData.projects.filter(p => p.category === this.filter);
-        }
-      }
     }).mount('#app');
-  </script>
+</script>
 </body>
 </html>
