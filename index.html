@@ -65,23 +65,52 @@
             </div>
         </section>
 
-        <!-- Filter Tabs -->
+        <!-- Filter Tabs and Sort -->
         <section id="work" class="px-4 pb-8">
             <div class="max-w-7xl mx-auto">
-                <div class="flex flex-wrap gap-3">
-                    <button
-                            v-for="cat in categories"
-                            :key="cat.id"
-                            @click="filter = cat.id"
-                            :class="[
-                'px-6 py-2 rounded-full transition',
-                filter === cat.id 
-                  ? 'bg-purple-600 text-white' 
-                  : 'bg-white/10 hover:bg-white/20 text-white/70'
-              ]"
-                    >
-                        {{ cat.label }}
-                    </button>
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                    <div class="flex flex-wrap gap-3">
+                        <button
+                                v-for="cat in categories"
+                                :key="cat.id"
+                                @click="filter = cat.id"
+                                :class="[
+                    'px-6 py-2 rounded-full transition',
+                    filter === cat.id
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-white/10 hover:bg-white/20 text-white/70'
+                  ]"
+                        >
+                            {{ cat.label }}
+                        </button>
+                    </div>
+
+                    <!-- Sort Control -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-white/60">Sort:</span>
+                        <button
+                                @click="sortOrder = 'chronological'"
+                                :class="[
+                    'px-4 py-2 rounded-lg text-sm transition',
+                    sortOrder === 'chronological'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-white/10 hover:bg-white/20 text-white/70'
+                  ]"
+                        >
+                            Earliest First
+                        </button>
+                        <button
+                                @click="sortOrder = 'reverse'"
+                                :class="[
+                    'px-4 py-2 rounded-lg text-sm transition',
+                    sortOrder === 'reverse'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-white/10 hover:bg-white/20 text-white/70'
+                  ]"
+                        >
+                            Latest First
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -91,7 +120,7 @@
             <div class="max-w-7xl mx-auto">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div
-                            v-for="project in filteredProjects"
+                            v-for="project in sortedProjects"
                             :key="project.id"
                             @click="selectedProject = project"
                             class="group cursor-pointer relative overflow-hidden rounded-xl bg-white/5 hover:bg-white/10 transition-all duration-300 hover:scale-105"
@@ -114,7 +143,7 @@
                             <div class="flex justify-between items-start mb-2">
                                 <h3 class="text-xl font-bold">{{ project.title }}</h3>
                             </div>
-                            <p class="text-sm text-white/60">{{ project.year }} • {{ project.medium }}</p>
+                            <p class="text-sm text-white/60">Week {{ project.week }} • {{ project.medium }}</p>
                         </div>
                     </div>
                 </div>
@@ -173,7 +202,7 @@
                         />
                         <div class="space-y-4">
                             <div class="flex gap-4 text-sm text-white/60">
-                                <span>{{ selectedProject.year }}</span>
+                                <span>Week {{ selectedProject.week }}</span>
                                 <span>•</span>
                                 <span>{{ selectedProject.medium }}</span>
                                 <span>•</span>
@@ -202,6 +231,7 @@
                 selectedProject: null,
                 mobileMenuOpen: false,
                 filter: 'all',
+                sortOrder: 'chronological',
 
                 portfolioData: {
                     name: "Callam Jomaa",
@@ -211,20 +241,20 @@
                     projects: [
                         {
                             id: 1,
-                            title: "Abstract Art",
+                            title: "Abstract Design",
                             category: "traditional",
                             medium: "Alcohol Markers",
-                            year: "2025",
+                            week: 1,
                             writeup: "I started out thinking about bubbles. I made three circles, then added smaller circles within those. Then I thought I would add triangles in the larger ones, then they turned into pyramids. I just kept adding detail until I reached something that looks like a geometric design almost alike something that would be on a rug. I like the way the pyramids look, just floating as if in space. I think the parts i dislike the most are the gray lines in the yellow circles which I think should have been smaller and not gone the whole way into the circle. I also would fix the green square I botched in the top.",
-                            image: "img/abstract-replace.png",
+                            image: "img/abstract.png",
                             favorite: false
                         },
                         {
                             id: 2,
-                            title: "Project In Grays",
+                            title: "Achromatic",
                             category: "traditional",
                             medium: "Graphite",
-                            year: "2025",
+                            week: 2,
                             writeup: "I started thinking about nature, and I went through my photos and found one that looked nice (in my opinion), and started sketching. I did not trace the photo, I just had it up on my phone and glanced over at it while I sketched. Because I wasn't tracing, I didn't follow the perspective quite perfectly, but I think it still looks okay. The best part (in my opinion) is there treeline on the right, I think the stylized look is nice. The buddy board does look a little soulless without the hooks, I might go back on my own time and add them, as well as some other details.",
                             image: "img/project-in-grays.png",
                             favorite: true
@@ -234,7 +264,7 @@
                             title: "Color Variation",
                             category: "traditional",
                             medium: "Collage",
-                            year: "2025",
+                            week: 3,
                             writeup: "For this, (which may be obvious) I did blue, and I made a collage. All the snippets are from the same magazine, that magazine being an edition of Better Homes & Gardens. The resulting piece honestly exceeded my expectations, and I think the waterfall really holds it all together.",
                             image: "img/color-variation.png",
                             favorite: false
@@ -244,7 +274,7 @@
                             title: "Monochromatic Value",
                             category: "digital",
                             medium: "Digital Painting (Krita)",
-                            year: "2025",
+                            week: 3,
                             writeup: "I wasn't sure what I wanted to do, but once I decided I wanted to do purple, I started thinking about meteors, and things like that.\n" +
                                 "\n" +
                                 "That led me to my initial start (what is in my WIP photo). I then started to add some shading, and I thought to add a horizon line. Below that line turned into an ocean, and above that line turned into a sky.\n" +
@@ -260,17 +290,17 @@
                             title: "Warm/Cool Harmony",
                             category: "digital",
                             medium: "Digital Painting (Krita)",
-                            year: "2025",
+                            week: 4,
                             writeup: "For this time, I wanted to try a more fauvist approach to painting, that is to paint the colors that the objects \"felt like\" rather than what they visually look like. I started by looking for a reference image that would do. I used it mostly as inspiration while I painted, but I did not strictly follow its form. I think it turned out so well! My proudest part is the sort of snowy, grassy, goldy (is that a word?) field, and the tree. I think the cloudy mountains in the far background could have used SLIGHTLY more detail, but I was running out of time.",
                             image: "img/warm-cool-harmony.png",
                             favorite: true
                         },
                         {
                             id: 6,
-                            title: "Complimentary Color Scheme Portrait",
+                            title: "Complimentary Colors Portrait",
                             category: "digital",
                             medium: "Digital Painting (Krita)",
-                            year: "2025",
+                            week: 4,
                             writeup: "For this one I wanted to make a portrait of one of my co-workers. I started by tracing a rough outline of their face, and I chose my color palette. I went for a yellow and violet color palette because I think it fit them very well. I think my favorite touch is the stylized \"eyelids\" on the glasses, it really makes it so much more complete. If I were to do this again, I would probably make the hair more interesting, everything else has just the right shape, but I'm not quite happy with the hair.",
                             image: "img/complimentary-portrait.png",
                             favorite: false
@@ -280,7 +310,7 @@
                             title: "Mondrian Style",
                             category: "traditional",
                             medium: "Water-based Markers",
-                            year: "2025",
+                            week: 5,
                             writeup: "When I saw the examples I immediately thought about one of those golden ratio grids. At first I was thinking I would measure the each line, but that didn't seem like it fit the style, so I went with a similar inspiration, but a different approach, where each layer was split into larger and larger percentages as it went on. I think I should have make some smaller splits to start with, just so I could have some smaller places to put some more color in, right now it just feels a little empty on the right and top, but I didn't want to fill that whole area with color.",
                             image: "img/mondrian.jpeg",
                             favorite: false
@@ -290,7 +320,7 @@
                             title: "Analogous Color Animation",
                             category: "digital",
                             medium: "Procedural Animation (Manim)",
-                            year: "2025",
+                            week: 5,
                             writeup: "I was inspired by the animated example, and decided to make manim animation of a sort of range of analogous colors. I wanted to make it interesting and so I added some entrance and exit effects. Overall I think it looks interesting, but what really bothers me is that it's not a perfect loop. I'm not sure how I would achieve this with purely manim, but I think it would really make the gif cool.",
                             image: "img/analogous-colors-manim.gif",
                             favorite: false
@@ -300,7 +330,7 @@
                             title: "Mixed Color Wheel",
                             category: "traditional",
                             medium: "Acrylic Paint",
-                            year: "2025",
+                            week: 5,
                             writeup: "My process for my color wheel was pretty simple, I started by drawing a rough outline for my circle, adding spots for the colors, and mixing the colors around the circle as I went. It was a pretty simple process and I think it worked out well.",
                             image: "img/color-wheel.jpeg",
                             favorite: false
@@ -310,7 +340,7 @@
                             title: "Self Portrait",
                             category: "traditional",
                             medium: "Color Pencil",
-                            year: "2025",
+                            week: 6,
                             writeup: "I wanted to use this self-portrait to symbolize some of my withdrawnness. I chose two analogous colors, blue and green. The blue is intended to help symbolize the \"cold\" in the jacket I wear, that hides the more vibrant part of me. I chose green for the inner part for two reasons: it has a sort of prismatic, but human feeling (maybe that's just me), and it green is (sort of) my favorite color, although I think yellow, red, or orange might have been more obvious colors to go with. In general, there are two parts of the portrait. There is me on the inside in green, holding myself in. And there is my jacket on the outside in blue, which protects me from the cold around me, and keeps my dearest things inside. I wear my 'jacket' as a facade sometimes, and I am still learning how to be more open sometimes.\n" +
                                 "\n" +
                                 "I think the jacket and the face is overall pretty good, I think I could have used a slightly wider range of greens. I kind of wanted to create a more crystal-like look on the face, which I think I needed at least 1 more significantly different variant. I think I actually like the outline the best, perhaps graphite is more my style.",
@@ -322,7 +352,7 @@
                             title: "Translucency Chart",
                             category: "traditional",
                             medium: "Acrylic Paint",
-                            year: "2025",
+                            week: 7,
                             writeup: "The letters at the start of the colors are the brand names abbreviated, the \"legend\" is on the right. \"Acrylic Colour\" (some sort of generic I imagine) and Marie's were both tube-paint, meanwhile all the Apple Barrel paints were in small bottles, all of them were Acrylic. From the result, I can tell Burnt Umber, Candy Pink, and Petunia Purple are all quite opaque, meanwhile the rest of the colors seem to be rather transparent. Lemon Yellow and Vermilion seem to be a little more opaque than the others however.",
                             image: "img/translucency-chart.jpeg",
                             favorite: false
@@ -332,7 +362,7 @@
                             title: "Bezold Effect",
                             category: "traditional",
                             medium: "Collage",
-                            year: "2025",
+                            week: 7,
                             writeup: " may have gone a little overboard on this project, the designs are much more intricate than I think they needed to be, and thus it took a very long time. My initial thought was a sort of crest, with crossed swords, and I wanted to use 4 colors, 2 would be the subject's colors, and the other 2 would be the background, then they would swap. I also thought a diamond was a good idea as well. The end results are pretty good I think, however the intricacy did affect just how identical the shapes are. If I did it again, I would do a lot simpler shapes, and probably get a glue stick.",
                             image: "img/bezold-effect.jpeg",
                             favorite: false
@@ -342,7 +372,7 @@
                             title: "Underpainting",
                             category: "traditional",
                             medium: "Acrylic Paint",
-                            year: "2025",
+                            week: 7,
                             writeup: "\n" +
                                 "At first I was thinking about something that would be simple since I am a pretty novice painter with somewhat limited resources, so I figured, \"what's more simple than a door?\". I thought it might be an interesting \"this is fine\" (see: https://giphy.com/explore/this-is-fine) sort of painting if I added some fire on the inside.\n" +
                                 "\n" +
@@ -364,7 +394,7 @@
                             title: "Midterm Project",
                             category: "digital",
                             medium: "Digital Painting (Krita)",
-                            year: "2025",
+                            week: 8,
                             writeup: "Firstly the trees, which were quite tediously placing several layers of color, texture, and shading along the areas I outlined. After that I went in-between all the well-defined trees and places rough tree-like shapes and forms, as well as shading behind the trees to give the illusion of a forest. Next I put the mountain in the background, with a snowcap, and added some atmospheric shading to sell the look. Then I added the sky using a few bands of color, blurred that layer to make a simple stepped but not harsh gradient, and added texture to it using a light brush. Finally I added a layer of clouds around the snowcap using a large brush. Overall I think it worked out. The bright sky compliments the dark reflection pretty well, and the mix of analogous colors in both the dark and the light side turned out good in my (definitely not at all biased) opinion. Having the pause in the middle to take some notes was helpful.",
                             image: "img/midterm.png",
                             favorite: true
@@ -374,12 +404,96 @@
                             title: "Interior Design",
                             category: "digital",
                             medium: "Digital Coloring (Krita)",
-                            year: "2025",
+                            week: 9,
                             writeup: "I've always wanted to have a some programmable lighting, in an ideal world (which is what we are modeling I suppose) I would replace the christmas lights with some programmable string lights. I would add some programmable light strips around as well, perhaps some under the bed, as well as some around the desk. I would also replace the light bulbs with some programmable ones and add some diffusers over them.\n" +
                                 "\n" +
                                 "Right now the whole room is mainly fresh wood. While I don't hate the aesthetic, I think a white color scheme with pastel pink highlights and dark gray/purple accents would be wonderful. To that end, I would want to replace/refinish most of my furniture to fit that palette. The bed frame would be space cadet, as well as the dresser and the rafters. The bedding and curtains would be pink and soft pink, and the tables and walls would be white. The carpet could be replaced with something white or soft pink. I think the desk would work best with white or space cadet, I don't want it to be *too* pink, along with the shelves above it. There is definitely a line which, when crossed, is a distasteful amount of pink (similar to any color). The backpacking chair next to the window is a temporary thing, but if it were permanent I would make it pink + light pink. I actually already have a mouse pad that is white + pink which I could swap the current one with. Finally the office chair would have to be replaced, probably with something white.",
                             image: "img/interior-design.jpeg",
                             favorite: true
+                        },
+                        {
+                            id: 16,
+                            title: "Passive and Active Paintings",
+                            category: "traditional",
+                            medium: "Acrylic Paint",
+                            week: 9,
+                            writeup: "My inspiration was a photo of a 'deer' snowman, or snowdeer if you will, from a few weeks ago, so I went with it, because why not? For the passive version I use slight differences in color to show shadows, and made an attempt overall to blend the shading mostly. I used blues and cool tones of whites to evoke the calmness. In the active version I used outlines and the directions of the brushstrokes to imply the form, and used warm colors such as red and yellow, without any blending. (Honestly I think the second one looks almost unnerving). I think the shading on the passive version was pretty good, but something for next time (especially for the active one) is to erase my sketch so it will be lighter. ",
+                            image: "img/passive-active.png",
+                            favorite: false
+                        },
+                        {
+                            id: 17,
+                            title: "Tetrad Pattern",
+                            category: "digital",
+                            medium: "Digital Painting (Krita)",
+                            week: 10,
+                            writeup: "Once again I used Krita to do this project. I wanted to create something square-like, so I found this image which was my inspiration. I started by using the 2-point-assistant built into Krita to create a guide. Then, since I couldn't paint the guide onto the grid directly, I took a screenshot of it and then opened that screenshot in Krita to work further. Then I began adding the colors in, and added a rectangle over the center to cover the rough area in the center which would definitely prove to be very difficult to color otherwise (despite definitely looking cool if I did) and it also let me fit another color in. I had to change the color, and had to adjust the paint bucket tool to re-color properly without leaving a messy edge. From there I filled in each part of the pattern with parts of the color scheme. Once I was done, I made the canvas bigger, revealing an extra part of the rectangle in the center, so I cropped the image down again to remove it, then repeated the resize. When I started to repeat the tiles to make the pattern, I realized I had made a mistake and did not mirror the colors diagonally properly, so some colors weren't matched up, so I once again shrunk the canvas back down and mirrored it diagonally. Finally I was able to resize the canvas one last time, duplicate the pattern a few times, line them up into a grid, then merge them together, and repeat (twice). \n" +
+                                "I think the pattern is okay, I like the cube effect that I got from the perspective guide, and I also like the lattice pattern it forms. My biggest issues are that for one it is a bit boring, I mean patterns are typically boring, but the strict color palette sort of kills the fun, as well as there are a few seems which are painfully obvious if you look close, I didn't notice them until I was done, but they are unfortunately hard to fix, since it is an issue with the edge of the tile itself, not just the alignment.",
+                            image: "img/tetrad-pattern.png",
+                            favorite: false
+                        },
+                        {
+                            id: 18,
+                            title: "Mandela",
+                            category: "traditional",
+                            medium: "Color Pencil",
+                            week: 10,
+                            writeup: "I used the \"vibes\" strategy. I just grabbed a pencil and started drawing freehand, working my way out, honestly pretty therapeutic. I realized it started looking sort of mechanical, so I just went with it. Once I finished drawing the lines, I started coloring using dulled, mechanical-themed colors. This includes a circuit board green, and a copper-orange. I used a light and de-saturated blue on a circle with a grid in an attempt to symbolize a silicon wafer. I used light gray to convey metallic and sharp 'teeth'. Once I had finished the colored parts, I went back over the important lines with a dark black to emphasize them.",
+                            image: "img/mandela.jpeg",
+                            favorite: true
+                        },
+                        {
+                            id: 19,
+                            title: "Zentangles",
+                            category: "traditional",
+                            medium: "Water-based Markers",
+                            week: 11,
+                            writeup: "This was enjoyable, another calming 'just vibes' assignment. The leftmost square was supposed to symbolize a pond, with complimentary colors (blue/yellow, green/purple). The middle square has a mask (It's a bit obscure, but I made it because I recently saw a play), it's supposed to be mysterious so I went with some darker colors and a analogous color scheme. Finally the rightmost square is half-clam-half-crocodile, and the color scheme is more skeuomorphic than anything, to make the forms more understandable. I think the thing this week taught me the most that I need some better paper that won't hate being dampened and curl up.",
+                            image: "img/zentangles.jpeg",
+                            favorite: false
+                        },
+                        {
+                            id: 20,
+                            title: "Still Life",
+                            category: "traditional",
+                            medium: "Acrylic Paint",
+                            week: 11,
+                            writeup: "I started with the B/W (of course), painting over my sketch following the shadows and highlights I had marked in my sketch. I first did the objects, and their shadows and highlights, then I filled in the table and background. Then I let it dry and continued with the color layer. I used the technique mixing the complimentary color into the main color to get a darker color, and mixing white to get a lighter color and I also mixed yellow into the green for the highlights. Unfortunately the yellow I had left was pretty dry, so it didn't really mix in well on the cube.",
+                            image: "img/still-life.jpeg",
+                            favorite: true
+                        },
+                        {
+                            id: 21,
+                            title: "Interpreting a Master",
+                            category: "digital",
+                            medium: "Digital Painting (Krita)",
+                            week: 12,
+                            writeup: "I based this artwork off of an artwork that I have no idea who to attribute it to. Originally I thought it was a Henri Matisse work, but after taking a longer look at it while I used it as a reference, it didn't really look like an original Matisse and more like a rendition of one, which is the assumption I operated on. However after I finished creating my own rendition, I wanted to do a little more research, and couldn't turn up anything official attributing this to Henri Matisse, or any of the hundreds of other renditions I see in the search results. I also found a simpler version even more commonly attributed to Matisse that also just didn't seem officially backed up anywhere. It is similar to one of his goldfish paintings which is more official, but there is nothing I can find tying this to anyone. Perhaps it was created as an homage to Matisse. Either way, I could not find a really proper source unfortunately.\n" +
+                                "Anyways, here is my process:\n" +
+                                "First I started by tracing the major lines. Then I filled each section using a rough approximate color that represented the entire area decently well, as a base to add shading to. Finally, I shaded each section referencing the original (to a degree, the colors are a bit different). I think it's okay, although honestly I think there could be even more variation, also the view out of the window is quite dissimilar to the 'original', I wasn't quite sure what I was supposed to see to be honest. That said, I think I still got the fauvist colors right. Fauvists used strong and bright colors, that weren't naturalistic (they didn't use the same colors to represent something as you would find in nature), and instead they represented emotions. These colors can evoke more directly, emotions and ideas, rather than simply depicting a scene.\n",
+                            image: "img/repro-remix.png",
+                            favorite: true
+                        },
+
+                        {
+                            id: 22,
+                            title: "Travel Poster",
+                            category: "digital",
+                            medium: "Digital Painting (Krita)",
+                            week: 13,
+                            writeup: "I am not at all satisfied with what I have, that is because, to put it briefly, I was cutting it close on time, and in the rush I accidentally nuked my work and had to fall back on one of the WIP photos I took, which had a lot of the things in the wrong place, and did not have any layers, so it essentially ruined it. Lessons of that day, don't cut it so close, and don't rush! (And save the correct document beforehand). Overall the piece is very basic, and the Battle Monument is in an entirely incorrect spot due to being frozen in a place that was supposed to be temporary! The path and covered bridge, while simple, are still the best parts of this image.",
+                            image: "img/travel-poster.png",
+                            favorite: false
+                        },
+                        {
+                            id: 23,
+                            title: "Redux (of Travel Poster)",
+                            category: "digital",
+                            medium: "Digital Painting (Krita)",
+                            week: 14,
+                            writeup: "I decided to redo my travel poster assignment due to how unsatisfied I was with how it turned out. This time, I still did not have much time (I had had a long day) however I made sure not to rush like I was last time and I used that version as a reference while making my next version. I added more *Green* (as in the Green Mountain State) shades and some trees to the piece as well as refining all the other parts of it. I made it more symmetrical as I originally intended with the first version, and made the Bennington Battle Monument look much more true-to-life (while still being simple to fit with the general aesthetic). If I had more time a few things I would do is add some smooth outlines to everything, I think it would really complete the infographic poster style I was going for, and could allow for some more details as well. The simplicity is partially by design, however I think they do look a bit too simple, perhaps I could have varied them with a 2-layer variant, and a variant made of circles?",
+                            image: "img/redux-poster.png",
+                            favorite: false
                         }
                     ]
                 },
@@ -397,6 +511,16 @@
                 return this.filter === 'all'
                     ? this.portfolioData.projects
                     : this.portfolioData.projects.filter(p => p.category === this.filter);
+            },
+
+            sortedProjects() {
+                const filtered = [...this.filteredProjects];
+
+                if (this.sortOrder === 'chronological') {
+                    return filtered.sort((a, b) => a.week - b.week);
+                } else {
+                    return filtered.sort((a, b) => b.week - a.week);
+                }
             }
         }
     }).mount('#app');
